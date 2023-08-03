@@ -2,16 +2,14 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"inktrail/controllers"
+	"inktrail/handler"
 )
 
 func SetupRoutes(app *gin.Engine) {
 	app.LoadHTMLGlob("templates/*")
 
-	app.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html",
-			gin.H{
-				"title": "Home Page",
-			})
-	})
+	app.GET("/", handler.ShowIndexPage)
+	app.POST("/api/register", controllers.CreateUser)
+	//app.POST("/api/login", controllers.Login)
 }

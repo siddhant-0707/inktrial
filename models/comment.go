@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Comments struct {
 	gorm.Model
-	content string
+	Content string
 	UserID  uint
 	BlogID  uint
 }
