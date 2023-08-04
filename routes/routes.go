@@ -11,5 +11,5 @@ func SetupRoutes(app *gin.Engine) {
 
 	app.GET("/", handler.ShowIndexPage)
 	app.POST("/api/register", controllers.CreateUser)
-	//app.POST("/api/login", controllers.Login)
+	app.POST("/api/login", controllers.Login)
 }
