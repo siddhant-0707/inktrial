@@ -62,7 +62,7 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func getUserByUsername(u string) (*models.User, error) {
+func GetUserByUsername(u string) (*models.User, error) {
 	db := config.DB
 	var user models.User
 	if err := db.Where(&models.User{Username: u}).Find(&user).Error; err != nil {
@@ -101,7 +101,7 @@ func Login(c *gin.Context) {
 	pass := input.Password
 	userModel, err := new(models.User), *new(error)
 
-	userModel, err = getUserByUsername(identity)
+	userModel, err = GetUserByUsername(identity)
 
 	if userModel == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
@@ -147,32 +147,3 @@ func Login(c *gin.Context) {
 	})
 	return
 }
-
-// Login User
-/*func Login(c *gin.Context) {
-	var loginReq struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-	if err := c.ShouldBindJSON(&loginReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
-		return
-	}
-
-	for _, user := range models.Users {
-		if user.Username == loginReq.Username {
-			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginReq.Password))
-			if err != nil {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-				return
-			}
-
-			// User authenticated, return token (if using JWT)
-
-			c.JSON(http.StatusOK, gin.H{"message": "User logged in successfully"})
-			return
-		}
-	}
-
-	c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
-}*/

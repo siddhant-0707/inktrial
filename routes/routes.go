@@ -4,12 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"inktrail/controllers"
 	"inktrail/handler"
+	"inktrail/middleware"
 )
 
 func SetupRoutes(app *gin.Engine) {
 	app.LoadHTMLGlob("templates/*")
 
 	app.GET("/", handler.ShowIndexPage)
-	app.POST("/api/register", controllers.CreateUser)
-	app.POST("/api/login", controllers.Login)
+
+	publicRoutes := app.Group("/auth")
+	publicRoutes.POST("/register", controllers.CreateUser)
+	publicRoutes.POST("/login", controllers.Login)
+
+	protectedRoutes := app.Group("/api")
+	protectedRoutes.Use(middleware.JWTAuthMiddleware())
+	protectedRoutes.POST("/blog", controllers.AddBlog)
+	protectedRoutes.GET("/blog", controllers.GetAllBlogs)
 }

@@ -1,10 +1,12 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Blog struct {
 	gorm.Model
-	Title   string
-	Content string
-	UserID  uint
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	UserID  uint   `json:"id"`
 }
