@@ -2,9 +2,9 @@ package models
 
 import "gorm.io/gorm"
 
-type Comments struct {
+type Comment struct {
 	gorm.Model
-	Content string
-	UserID  uint
-	BlogID  uint
+	Content string `json:"content"`
+	UserID  uint   `json:"user-id"`
+	BlogID  uint   `json:"blog-id"`
 }

@@ -20,7 +20,7 @@ func ConnectDB() {
 		println("Connection Successfull")
 	}
 
-	err = DB.AutoMigrate(&models.User{}, &models.Blog{}, &models.Comments{})
+	err = DB.AutoMigrate(&models.User{}, &models.Blog{}, &models.Comment{})
 	if err != nil {
 		return
 	}

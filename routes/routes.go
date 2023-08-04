@@ -18,6 +18,11 @@ func SetupRoutes(app *gin.Engine) {
 
 	protectedRoutes := app.Group("/api")
 	protectedRoutes.Use(middleware.JWTAuthMiddleware())
+
 	protectedRoutes.POST("/blog", controllers.AddBlog)
 	protectedRoutes.GET("/blog", controllers.GetAllBlogs)
+	protectedRoutes.GET("/blog/:id", controllers.GetBlogByID)
+
+	protectedRoutes.POST("/:id/comment", controllers.AddComment)
+	protectedRoutes.GET("/:id/comment", controllers.GetCommentsByBlogID)
 }

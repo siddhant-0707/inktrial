@@ -11,8 +11,8 @@ import (
 	"strings"
 )
 
-func ValidateJWT(context *gin.Context) error {
-	token, err := getToken(context)
+func ValidateJWT(c *gin.Context) error {
+	token, err := getToken(c)
 	if err != nil {
 		return err
 	}
@@ -23,37 +23,48 @@ func ValidateJWT(context *gin.Context) error {
 	return errors.New("invalid token provided")
 }
 
-func CurrentUser(context *gin.Context) (models.User, error) {
-	err := ValidateJWT(context)
+func CurrentUser(c *gin.Context) (models.User, error) {
+	err := ValidateJWT(c)
 	if err != nil {
 		return models.User{}, err
 	}
-	token, _ := getToken(context)
+	token, _ := getToken(c)
 	claims, _ := token.Claims.(jwt.MapClaims)
-	userId := uint(claims["id"].(float64))
 
+	// Add debug statement to check the claims
+	fmt.Printf("Claims: %+v\n", claims)
+
+	userId, ok := claims["user_id"].(float64)
+	if !ok {
+		return models.User{}, errors.New("invalid user ID in claims")
+	}
+
+	// Add debug statement to check the userID
+	fmt.Printf("UserID: %v\n", userId)
+
+	userID := uint(userId)
 	db := config.DB
-	user, err := repositories.FindUserById(db, userId)
+	user, err := repositories.FindUserById(db, userID)
 	if err != nil {
 		return models.User{}, err
 	}
 	return user, nil
 }
 
-func getToken(context *gin.Context) (*jwt.Token, error) {
-	tokenString := getTokenFromRequest(context)
+func getToken(c *gin.Context) (*jwt.Token, error) {
+	tokenString := getTokenFromRequest(c)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return config.Config("SECRET"), nil
+		return []byte(config.Config("SECRET")), nil
 	})
 	return token, err
 }
 
-func getTokenFromRequest(context *gin.Context) string {
-	bearerToken := context.Request.Header.Get("Authorization")
+func getTokenFromRequest(c *gin.Context) string {
+	bearerToken := c.Request.Header.Get("Authorization")
 	splitToken := strings.Split(bearerToken, " ")
 	if len(splitToken) == 2 {
 		return splitToken[1]
